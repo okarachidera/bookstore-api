@@ -9,6 +9,7 @@ import cors from 'cors';
 
 import indexRouter from './routes/index';
 import usersRouter from './routes/users';
+import { startDB } from './model/db';
 
 
 const app = express();
@@ -37,7 +38,8 @@ app.use(function(req, res, next) {
   next(createError(404));
 });
 
-
+// connect db
+startDB()
 
 // error handler
 app.use(function(err: HttpError, req: Request, res: Response, next: NextFunction) {

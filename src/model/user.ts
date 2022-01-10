@@ -1,108 +1,79 @@
-import { v4 as uuidv4 } from "uuid";
-import fs from "fs";
-import path from "path";
-import bcrypt from "bcrypt"
-import express, { NextFunction, Response, Request } from 'express';
+import bcrypt from "bcrypt";
+import express, { NextFunction, Response, Request } from "express";
+import { findAuthUsers, createUsers } from "./db";
 
+// findAuthUsers
 
 interface userInt {
-  id: any;
-  fullname: string;
+  firstName: string;
+  lastName: string;
   email: string;
-  dateOfBirth:any;
-  password: string;
+  dateOfBirth: any;
+  phoneNumber: string;
+  password: any;
 }
 
 interface reqObj extends Request {
-  token: string 
+  token: string;
+}
+interface demoInterface extends Request {
+  foundUser: string | object;
 }
 
-let pathOut = path.join(__dirname, "../../users.json");
 // pasword bcrypt password
 const saltRounds = 10;
 // const myPlaintextPassword = 's0/\/\P4$$w0rD';
 
 export class User implements userInt {
-  id: any;
-  fullname: string;
+  firstName: string;
+  lastName: string;
   email: string;
-  dateOfBirth:any
+  dateOfBirth: any;
+  phoneNumber: string;
   password: any;
-  
-  static verifyToken(req:reqObj, res:any, next:any) {
-    const bearerHeader = req.headers['authorization']
-    if(typeof bearerHeader !== 'undefined'){
-        const bearerToken = bearerHeader.split(' ')[1]
-        req.token = bearerToken
-        next()
+
+  static verifyToken(req: reqObj, res: any, next: any) {
+    const bearerHeader = req.headers["authorization"];
+    if (typeof bearerHeader !== "undefined") {
+      const bearerToken = bearerHeader.split(" ")[1];
+      req.token = bearerToken;
+      next();
     } else {
-        res.sendStatus(403) //forbidden
+      res.sendStatus(403); //forbidden
     }
-}
-  static userLogin(email:string,password:string){
-   let loginStatus='No account found'
-   let data= User.readUserAccounts()
-   let dataParsed=JSON.parse(data)
-   let foundUser=dataParsed.find((e:any)=>e['email']==email)
-   if(foundUser){
-     // Load hash from your password DB.
-     if(bcrypt.compareSync(password, foundUser['password'])){
-       console.log(foundUser);
-       loginStatus='Access Granted'
-     }else{
-       loginStatus='Incorrect Credentials'
-     }
+  }
+  static async userLogin(email: string, password: string) {
+    let loginStatus = "No account found";
 
-   }
-   console.log(loginStatus);
-   
-   return loginStatus
-   
-  }
-  static readUserAccounts(){
-    let readData = fs.readFileSync(pathOut, { encoding: "utf-8" })
-    return readData
-  }
-  static writeUserAccounts(data:any){
-    fs.writeFileSync(pathOut, JSON.stringify(data, null, 4), {
-      encoding: "utf-8",
-    });
-  }
+    let foundUser: any = await findAuthUsers(email);
+    console.log(foundUser);
 
-  constructor(fullname: string, email: string, password: string, dateOfBirth:any) {
-    this.id = uuidv4();
-    this.fullname = fullname;
-    this.email = email;
-    this.dateOfBirth=dateOfBirth
-    // Technique 2 (auto-gen a salt and hash):
-    this.password = bcrypt.hashSync(password, saltRounds);
-    this.createuser();
-  }
-
-  private createuser() {
-    let data = [];
-    let user = {
-      id: this.id,
-      fullname: this.fullname,
-      email: this.email,
-      dateOfBirth:this.dateOfBirth,
-      password: this.password,
-    };
-    let readData = User.readUserAccounts();
-    if (readData) {
-      data = JSON.parse(readData);
-      let dublicateData = data.find((a: any) => a["email"] == user["email"]);
-      if (dublicateData){
-          throw new Error("Account already Exist");          
+    if (foundUser.length > 0) {
+      // Load hash from your password DB.
+      if (bcrypt.compareSync(password, foundUser[0]["password"])) {
+        console.log(foundUser);
+        loginStatus = "Access Granted";
+      } else {
+        loginStatus = "Incorrect Credentials";
       }
-      else data.push(user);
     }
-    else{
-        data.push(user);
-    } 
+    console.log(loginStatus);
 
-    User.writeUserAccounts(data)
-    
+    return loginStatus;
+  }
+
+  constructor(
+    firstName: string,
+    lastName: string,
+    email: string,
+    password: string,
+    dateOfBirth: any,
+    phoneNumber: string
+  ) {
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.email = email;
+    this.dateOfBirth = dateOfBirth;
+    this.phoneNumber = phoneNumber;
   }
 }
-

@@ -1,6 +1,8 @@
 import fs from 'fs';
 import path from 'path';
-import Joi from 'joi';
+import Joi, { Err } from 'joi';
+import { VerifyOptions } from 'jsonwebtoken';
+import { Mongoose } from 'mongoose';
 
 export interface books{
     id?: string,
@@ -17,6 +19,18 @@ export interface author{
     address: string,
     books: books[]
 }
+export interface LoginInt{
+    email: string,
+    password: string
+}
+
+export interface errInt extends Mongoose {
+    err: string 
+}
+
+interface reqObj extends Request {
+    token: string;
+  }
 
 const filePath = path.join(__dirname, '../../database.json');
 
@@ -43,6 +57,15 @@ export const validateEntry = (data: author) =>{
         books: Joi.array()
     }).unknown();
     return schema.validate(data);
+}
+
+export const validateLogin=(data:LoginInt) => {
+    const schema = Joi.object({
+        email: Joi.string().required,
+        password: Joi.string().required,
+    }).unknown()
+    
+    return schema.validate(data)
 }
 
 export const writeFile = (data: author[]) => {

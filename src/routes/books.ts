@@ -1,19 +1,18 @@
-import express, { NextFunction, Request, Response } from 'express';
+import express, { NextFunction, Request, Response } from "express";
 import {
-    getAllAuthor,
-    postAuthor, 
-    updateAuthor, 
-    deleteAuthor, 
-    getABook, 
-    updateBook, 
-    deleteBook, 
-    getAuthor, 
-    postBook
-} from '../controller/books.controller';
+  getAllAuthor,
+  postAuthor,
+  updateAuthor,
+  deleteAuthor,
+  getAllBooksForAuthor,
+  updateBook,
+  deleteBook,
+  getAuthor,
+  postBook,
+} from "../controller/books.controller";
 import jwt from "jsonwebtoken";
 import { User } from "../model/user";
-
-
+import { authorbooksPolicy, createauthorPolicy, createbooksPolicy, deleteauthorPolicy, deletebookPolicy, oneauthorPolicy, updateauthorPolicy, updatebookPolicy } from "../middleware/middleware";
 
 const router = express.Router();
 
@@ -21,21 +20,16 @@ const router = express.Router();
 //         .get()
 //         .post();
 
-
 // router.route("/")
 
-router.get('/',User.verifyToken, getAllAuthor) // gets all authors
-router.get('/:id',User.verifyToken, getAuthor) // get author by id
-router.get('/:authorId/book/:bookId',User.verifyToken, getABook) // get book by author id and book id
-router.post('/',User.verifyToken, postAuthor) // post author
-router.post('/:authorId/book',User.verifyToken, postBook) // post book by author id and book id
-router.put('/:id',User.verifyToken,updateAuthor) // update author by author id
-router.put('/:authorId/book/:bookId',User.verifyToken, updateBook) //update book by author id
-router.delete('/:id',User.verifyToken, deleteAuthor) //delete author by author id
-router.delete('/:authorId/book/:bookId',User.verifyToken, deleteBook) // delete book by author id and book id
-
-
-
-
+router.get("/", User.verifyToken, getAllAuthor); // gets all authors
+router.get("/:authorId", oneauthorPolicy, User.verifyToken, getAuthor); // get author by id
+router.get("/books/:authorId/:pageno", authorbooksPolicy, User.verifyToken, getAllBooksForAuthor); // get books for an by author id
+router.post("/", createauthorPolicy,User.verifyToken, postAuthor); // post author
+router.post("/:authorId/book",createbooksPolicy ,User.verifyToken, postBook); // post book by author id and book id
+router.put("/:id",updateauthorPolicy, User.verifyToken, updateAuthor); // update author by author id
+router.put("/book/:bookId", updatebookPolicy,User.verifyToken, updateBook); //update book by author id
+router.delete("/:id",deleteauthorPolicy ,User.verifyToken, deleteAuthor); //delete author by author id
+router.delete("/book/:bookId",deletebookPolicy, User.verifyToken, deleteBook); // delete book by author id and book id
 
 export default router;
