@@ -1,22 +1,4 @@
-import mongoose, { connect } from "mongoose";
-
-
-// export const connectDB = () => {
-//   // const url = `mongodb+srv://bookshop:Passw0rd@cluster0.xqrkq.mongodb.net/myBookStore?retryWrites=true&w=majority`;
-//   return mongoose.connect(`${process.env.MONGO_URL}`);
-// };
-
-// export const startDB = async () => {
-//   try {
-//     await connectDB();
-//   } catch (error) {
-//     //console.log(error);
-//   }
-// };
-
-
-
-
+import mongoose from "mongoose";
 
 
 const authorSchema = new mongoose.Schema(
