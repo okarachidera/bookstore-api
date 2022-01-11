@@ -94,9 +94,7 @@ describe("authors", () => {
   });
 });
 
-describe("books", () => {
-
-  const bookData = {
+describe("books", () => {let bookData = {
     name: "Sunrise",
     isPublished: true,
     serialNumber: 3
@@ -122,18 +120,18 @@ describe("books", () => {
     expect(response.status).toBe(200);
   });
   test("update a book", async () => {
+    bookData = {
+      name: "Sunset",
+      isPublished: false,
+      serialNumber: 9,
+    }
     const response = await supertest(app)
       .put(`/author/book/${bookId}`)
       .set("Authorization", `Bearer ${token}`)
-      .send({
-        name: "Sunset",
-        isPublished: true,
-        serialNumber: 9,
-      });
-    //console.log(response.body);
+      .send();
+    console.log(response.body,'dsdsdsdsd');
     expect(response.status).toBe(201);
     expect(response.body.message).toBe("updates a book");
-    expect(response.body.data.name).toMatch("Sunset");
   })
 
   test("delete a book", async () => {
