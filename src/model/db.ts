@@ -1,17 +1,23 @@
 import mongoose, { connect } from "mongoose";
 
-export const connectDB = () => {
-  // const url = `mongodb+srv://bookshop:Passw0rd@cluster0.xqrkq.mongodb.net/myBookStore?retryWrites=true&w=majority`;
-  return mongoose.connect(`${process.env.MONGO_URL}`);
-};
 
-export const startDB = async () => {
-  try {
-    await connectDB();
-  } catch (error) {
-    console.log(error);
-  }
-};
+// export const connectDB = () => {
+//   // const url = `mongodb+srv://bookshop:Passw0rd@cluster0.xqrkq.mongodb.net/myBookStore?retryWrites=true&w=majority`;
+//   return mongoose.connect(`${process.env.MONGO_URL}`);
+// };
+
+// export const startDB = async () => {
+//   try {
+//     await connectDB();
+//   } catch (error) {
+//     //console.log(error);
+//   }
+// };
+
+
+
+
+
 
 const authorSchema = new mongoose.Schema(
   {
@@ -66,7 +72,7 @@ export async function createAuthor(name: string, age: number, address: string) {
       address,
     });
     const result = await author.save();
-    console.log(result);
+    //console.log(result);
     return result;
   } catch (error) {
     return new Promise((resolve: any, reject: any) => {
@@ -97,10 +103,10 @@ export async function createBook(
     });
 
     const result = await book.save();
-    console.log(result);
+    //console.log(result);
     return result;
   } catch (error) {
-    console.log(error);
+    //console.log(error);
     return new Promise((resolve: any, reject: any) => {
       reject(error);
     });
@@ -124,10 +130,10 @@ export async function createUsers(
       password,
     });
     const result = await users.save();
-    console.log(result);
+    //console.log(result);
     return result;
   } catch (error) {
-    console.log(error);
+    //console.log(error);
     let res: any = error;
     return new Promise((resolve: any, reject: any) => {
       reject(res);
@@ -138,10 +144,10 @@ export async function createUsers(
 export async function findAuthUsers(email: string) {
   try {
     const users = await Users.find({ email });
-    console.log(users);
+    //console.log(users);
     return users;
   } catch (error) {
-    console.log(error);
+    //console.log(error);
     return error;
   }
 }
@@ -150,10 +156,10 @@ export async function getAllAuthorsModel(pageNumber: number) {
   try {
     let pageSize = 5;
     const authors = await Author.find().skip(pageNumber).limit(pageSize);
-    console.log(authors);
+    //console.log(authors);
     return authors;
   } catch (error) {
-    console.log(error);
+    //console.log(error);
     return new Promise((resolve, reject) => {
       reject(error);
     });
@@ -173,10 +179,10 @@ export async function getAllBooksByAuthorModel(authorId: string, pageNumber: num
   try {
     let pageSize = 5;
     const books = await Book.find({ authorid: authorId }).skip(pageNumber).limit(pageSize);
-    console.log(books);
+    //console.log(books);
     return books;
   } catch (error) {
-    console.log(error);
+    //console.log(error);
     return error;
   }
 }
@@ -200,7 +206,7 @@ export async function updateAuthorModel(
   address?: string
 ) {
   try {
-    console.log(name);
+    //console.log(name);
 
     let data = await Author.find({ id: authorId }).limit(1).select({ _id: 1 });
 
@@ -262,7 +268,7 @@ export const deleteAuthorModel = async (authorId: string) => {
 
 export const deleBookModel = async (bookId: string) => {
   const delBooks = await Book.deleteMany({ id: bookId });
-  console.log(delBooks);
+  //console.log(delBooks);
   return delBooks;
 };
 // createBook("author2", "believing", true, 2);

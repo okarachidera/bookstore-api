@@ -38,7 +38,7 @@ export async function loginUser(req: Request, res: Response) {
     let loginStatus = await User.userLogin(email, password);
     if (loginStatus == "Access Granted") {
       jwt.sign({ email, password }, mySecret, (err: any, token: any) => {
-        console.log(token);
+        //console.log(token);
         res.json({ loginStatus, token });
       });
     } else {

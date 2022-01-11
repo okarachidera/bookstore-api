@@ -46,18 +46,18 @@ export class User implements userInt {
     let loginStatus = "No account found";
 
     let foundUser: any = await findAuthUsers(email);
-    console.log(foundUser);
+    //console.log(foundUser);
 
     if (foundUser.length > 0) {
       // Load hash from your password DB.
       if (bcrypt.compareSync(password, foundUser[0]["password"])) {
-        console.log(foundUser);
+        //console.log(foundUser);
         loginStatus = "Access Granted";
       } else {
         loginStatus = "Incorrect Credentials";
       }
     }
-    console.log(loginStatus);
+    //console.log(loginStatus);
 
     return loginStatus;
   }
