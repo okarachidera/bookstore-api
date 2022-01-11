@@ -14,7 +14,6 @@ let ID: string;
 
 async function deletedata() {
     let result=await Users.deleteOne({email:loginData.email})
-    console.log(result)
     return result;
 }
 
@@ -52,13 +51,13 @@ const loginData = {
 })
 
 
-const authorData = {
-    author: "Hannah Montanna",
-    age: 32,
-    address: "7, Straight Street, Walls",
-  };
 
 describe("authors", () => {
+  const authorData = {
+      author: "Hannah Montanna",
+      age: 32,
+      address: "7, Straight Street, Walls",
+    };
 
   test("create author", async () => {
     const response = await supertest(app)
@@ -79,7 +78,6 @@ describe("authors", () => {
       .set("Authorization", `Bearer ${token}`)
       .send(authorData);
 
-    console.log(response.body.message,ID)
 
     expect(response.status).toBe(201);
     expect(response.body.message).toBe("updates an author");
@@ -99,26 +97,29 @@ describe("authors", () => {
 });
 
 describe("books", () => {
+
   const bookData = {
     name: "Sunrise",
     isPublished: true,
     serialNumber: 3
   };
+
   test("create a book", async () => {
     const response = await supertest(app)
       .post(`/author/${authorId}/book`)
       .set("Authorization", `Bearer ${token}`)
       .send(bookData);
     bookId = response.body.data.id
+    console.log('ffdfdfdfdfd',bookId);
+    
     expect(response.status).toBe(201);
   });
 
   test("get a book", async () => {
     const response = await supertest(app)
-      .get(`/author/books/${authorId}/${bookId}/${0}`)
+      .get(`/author/books/${authorId}/${0}`)
       .set("Authorization", `Bearer ${token}`);
       console.log(`/author/books/${authorId}/${bookId}/${0}`);
-      
     //console.log(response.body.book.name);
     expect(response.status).toBe(200);
   });
@@ -135,7 +136,8 @@ describe("books", () => {
     expect(response.status).toBe(201);
     expect(response.body.message).toBe("updates a book");
     expect(response.body.data.name).toMatch("Sunset");
-  });
+  })
+
   test("delete a book", async () => {
     const response = await supertest(app)
       .delete(`/author/book/${bookId}`)
