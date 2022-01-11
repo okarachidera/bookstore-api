@@ -8,6 +8,10 @@ const router = express.Router();
 router.post('/signup',signupPolicy,registerUser);
 router.post('/login',loginPolicy, loginUser);
 
+router.post('/register',(req: Request, res: Response)=>{
+    res.status(201).send({ message:'success at last oh....'})
+  })
+
 
 
 export default router;

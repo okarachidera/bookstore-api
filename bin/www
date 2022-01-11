@@ -4,9 +4,10 @@
  * Module dependencies.
  */
 
-var app = require('../dist/app').default;
-var debug = require('debug')('week-6-task:server');
-var http = require('http');
+const app = require('../dist/app').default;
+const debug = require('debug')('week-6-task:server');
+const http = require('http');
+
 
 /**
  * Get port from environment and store in Express.

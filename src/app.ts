@@ -5,6 +5,9 @@ import cookieParser from 'cookie-parser';
 import logger from 'morgan'
 import booksRouter from './routes/books'
 import cors from 'cors';
+import dotenv from "dotenv";
+
+dotenv.config()
 
 
 import indexRouter from './routes/index';

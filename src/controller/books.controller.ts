@@ -23,8 +23,11 @@ export const getAllAuthor = async (req: any, res: Response, next: NextFunction) 
       console.log(req.token);
       res.sendStatus(403);
     } else {
-      const data = await getAllAuthorsModel(req.param.pagno);
-      res.status(200).send({ message: "status", data });
+      let {pageno}= req.params
+      const data = await getAllAuthorsModel(pageno);
+      console.log(pageno);
+      
+      res.status(200).send({ message: "retrieved data", data });
     }
   });
 };
@@ -69,9 +72,9 @@ export const postAuthor = async (req: any, res: Response) => {
       res.sendStatus(403);
     } else {
       try {
-        let { name, age, address } = req.body;
-        let data = await createAuthor(name, age, address);
-        res.status(201).json({ response: "success", data });
+        let { author, age, address } = req.body;
+        let data = await createAuthor(author, age, address);
+        res.status(201).json({ message: "creates new author", data });
       } catch (error) {
         res.status(400).send(error);
       }
@@ -88,7 +91,7 @@ export const postBook = async(req: any, res: Response) => {
       let {name, isPublished,serialNumber } = req.body;
       let {authorId } = req.params;
       let data = await createBook(authorId, name, isPublished,serialNumber);
-      res.status(201).json({ message: "new book added", author: data });
+      res.status(201).json({ message: "new book added", data });
     }
   });
 };
@@ -141,7 +144,7 @@ export const deleteAuthor = async(req: any, res: Response, next: NextFunction) =
       try {
         let {id}=req.params
         let data = await deleteAuthorModel(id)
-        res.status(200).json({ message: "Trashed!", data });
+        res.status(201).json({ message: "Trashed!", data });
        
       } catch (error) {
         res.status(400).send(error);

@@ -23,7 +23,7 @@ export async function registerUser(req: Request, res: Response) {
       bcryptPassword,
       dateOfBirth
     );
-    res.status(200).send({ message: "Account created", newuser });
+    res.status(201).send({ message: "Account created", newuser });
   } catch (error) {
     if (error) {
       res.status(400).send({ message: "Account already exist", error });

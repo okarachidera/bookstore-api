@@ -22,7 +22,7 @@ const router = express.Router();
 
 // router.route("/")
 
-router.get("/", User.verifyToken, getAllAuthor); // gets all authors
+router.get("/:pageno", User.verifyToken, getAllAuthor); // gets all authors
 router.get("/:authorId", oneauthorPolicy, User.verifyToken, getAuthor); // get author by id
 router.get("/books/:authorId/:pageno", authorbooksPolicy, User.verifyToken, getAllBooksForAuthor); // get books for an by author id
 router.post("/", createauthorPolicy,User.verifyToken, postAuthor); // post author

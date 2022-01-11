@@ -1,7 +1,6 @@
 import fs from 'fs';
 import path from 'path';
 import Joi, { Err } from 'joi';
-import { VerifyOptions } from 'jsonwebtoken';
 import { Mongoose } from 'mongoose';
 
 export interface books{

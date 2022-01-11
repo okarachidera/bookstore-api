@@ -1,8 +1,8 @@
 import mongoose, { connect } from "mongoose";
 
 export const connectDB = () => {
-  const url = `mongodb+srv://bookshop:Passw0rd@cluster0.xqrkq.mongodb.net/myBookStore?retryWrites=true&w=majority`;
-  return mongoose.connect(url);
+  // const url = `mongodb+srv://bookshop:Passw0rd@cluster0.xqrkq.mongodb.net/myBookStore?retryWrites=true&w=majority`;
+  return mongoose.connect(`${process.env.MONGO_URL}`);
 };
 
 export const startDB = async () => {
@@ -13,16 +13,15 @@ export const startDB = async () => {
   }
 };
 
-// startDB();
-
-const authorSchema = new mongoose.Schema({
-  id: String,
-  author: String,
-  age: Number,
-  address: String,
-  createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now },
-});
+const authorSchema = new mongoose.Schema(
+  {
+    id: String,
+    author: String,
+    age: Number,
+    address: String,
+  },
+  { timestamps: true }
+);
 
 const bookSchema = new mongoose.Schema({
   id: String,
@@ -51,7 +50,7 @@ const usersSchema = new mongoose.Schema({
 
 const Book = mongoose.model("Book", bookSchema);
 const Author = mongoose.model("Author", authorSchema);
-const Users = mongoose.model("Users", usersSchema);
+export const Users = mongoose.model("Users", usersSchema);
 
 export async function createAuthor(name: string, age: number, address: string) {
   try {
@@ -261,11 +260,11 @@ export const deleteAuthorModel = async (authorId: string) => {
   return { delAuthors, delBooks };
 };
 
-export const deleBookModel= async(bookId:string)=>{
-  const delBooks= await Book.deleteMany({ id:bookId });
+export const deleBookModel = async (bookId: string) => {
+  const delBooks = await Book.deleteMany({ id: bookId });
   console.log(delBooks);
   return delBooks;
-}
+};
 // createBook("author2", "believing", true, 2);
 // createAuthor("odochi", 28, "no 3 oilserve close transwoji");
 

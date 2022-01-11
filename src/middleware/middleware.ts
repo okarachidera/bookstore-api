@@ -61,12 +61,12 @@ export const createbooksPolicy = (req: Request, res: Response, next: NextFunctio
 // create author
 export const createauthorPolicy = (req: Request, res: Response, next: NextFunction) => {
   const schema = Joi.object({
-    name: Joi.string().min(2).max(255).required(),
+    author: Joi.string().min(2).max(255).required(),
     age: Joi.number().required(),
     address: Joi.string().min(2).max(255).required()
   });
-  const { name,age,address } = req.body;
-  const { error }: any = schema.validate({ name,age,address });
+  const { author,age,address } = req.body;
+  const { error }: any = schema.validate({ author,age,address });
   if (error) {
     return res.status(500).json({ message: error.details[0].message.split('"').join("") });
   }
