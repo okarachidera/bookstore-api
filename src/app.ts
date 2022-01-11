@@ -12,7 +12,9 @@ dotenv.config()
 
 import indexRouter from './routes/index';
 import usersRouter from './routes/users';
-import { startDB } from './model/db';
+// import { startDB } from './model/db';
+import { connectDB, connectTestDB } from './database/mem';
+
 
 
 const app = express();
@@ -31,6 +33,17 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// connect db
+if(process.env.NODE_ENV === 'test'){
+  connectTestDB()
+}else{
+  connectDB()
+}
+
+console.log(process.env.NODE_ENV);
+
+// connectDB()
+
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/author', booksRouter)
@@ -41,8 +54,7 @@ app.use(function(req, res, next) {
   next(createError(404));
 });
 
-// connect db
-startDB()
+
 
 // error handler
 app.use(function(err: HttpError, req: Request, res: Response, next: NextFunction) {

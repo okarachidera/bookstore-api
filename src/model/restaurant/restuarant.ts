@@ -19,9 +19,9 @@ import mongoose, { connect } from "mongoose";
 // const Restuarant = mongoose.model("Restuarant", restuarantSchema);
 
 // async function getAllRestaurants() {
-//   console.log("sdsdsds");
+//   //console.log("sdsdsds");
 //   let result = myBookStore.restuarant.find();
-//   console.log(result);
+//   //console.log(result);
 
 //   return result;
 // }
