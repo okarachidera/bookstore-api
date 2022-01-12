@@ -6,7 +6,9 @@ import {getAllAuthor} from '../controller/books.controller';
 
 
 
-router.get('/',User.verifyToken,getAllAuthor) // gets all authors
+router.get('/',(req: Request, res: Response)=>{
+    res.render('home')
+}) // gets all authors
 
 
 
