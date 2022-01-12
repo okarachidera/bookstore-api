@@ -81,7 +81,7 @@ export async function createBook(
       authorid: authorid,
       name: name,
       isPublished: isPublished,
-      serialNumber: `00${data.length - 1}`,
+      serialNumber: `00${serialNumber}`,
     });
 
     const result = await book.save();

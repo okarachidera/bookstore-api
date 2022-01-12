@@ -1,5 +1,6 @@
 import supertest from 'supertest'
 import app from '../app'
+import mongoose from "mongoose";
 // import { Users } from "../model/db";
 
 
@@ -11,10 +12,11 @@ let ID: string;
 
 
 
-// async function deletedata() {
-//     let result=await Users.deleteOne({email:loginData.email})
-//     return result;
-// }
+afterAll(done => {
+  // Closing the DB connection allows Jest to exit successfully.
+  mongoose.connection.close()
+  done()
+})
 
 const loginData = {
     firstName:"chidera",
@@ -24,6 +26,7 @@ const loginData = {
     dateOfBirth:"1992-10-24",
     phoneNumber:"08767850845"
   };
+
 
 
   describe("POST /signup",()=>{
@@ -42,7 +45,7 @@ const loginData = {
           .post("/users/login")
           .send({ email: loginData.email, password: loginData.password });
         token = response.body.token;
-        // //console.log(response.body);
+        console.log(response.body);
         expect(response.status).toBe(200);
         expect(response.body.loginStatus).toBe("Access Granted");
     });
@@ -145,7 +148,11 @@ describe("books", () => {let bookData = {
 });
 
 
-
+  afterAll(done => {
+    // Closing the DB connection allows Jest to exit successfully.
+    mongoose.connection.close()
+    done()
+  })
 
 // deletedata() 
 

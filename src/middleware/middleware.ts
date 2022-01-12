@@ -68,7 +68,7 @@ export const createauthorPolicy = (req: Request, res: Response, next: NextFuncti
   const { author,age,address } = req.body;
   const { error }: any = schema.validate({ author,age,address });
   if (error) {
-    return res.status(500).json({ message: error.details[0].message.split('"').join("") });
+    return res.status(501).json({ message: error.details[0].message.split('"').join("") });
   }
   return next();
 };

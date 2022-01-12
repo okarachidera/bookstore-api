@@ -40,7 +40,7 @@ if(process.env.NODE_ENV === 'test'){
   connectDB()
 }
 
-console.log(process.env.NODE_ENV);
+console.log(process.env.NODE_ENV,process.env.JWT_SECRET_KEY);
 
 // connectDB()
 
