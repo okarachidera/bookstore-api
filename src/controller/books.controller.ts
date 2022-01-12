@@ -75,8 +75,8 @@ export const postAuthor = async (req: any, res: Response) => {
         let { author, age, address } = req.body;
         let data = await createAuthor(author, age, address);
         data
-          res.status(201).json({ message: "creates new author", data })
-          // : res.status(400).json({ message: "error occurred in creating author" });
+          ?res.status(201).json({ message: "creates new author", data })
+          : res.status(400).json({ message: "error occurred in creating author" });
       } catch (error) {
         res.status(400).send(error);
       }
@@ -94,8 +94,8 @@ export const postBook = async (req: any, res: Response) => {
       let { authorId } = req.params;
       let data = await createBook(authorId, name, isPublished, serialNumber);
       data
-        res.status(201).json({ message: "new book added", data })
-        // : res.status(400).json({ message: "error occurred in creating book", data });
+        ? res.status(201).json({ message: "new book added", data })
+        : res.status(400).json({ message: "error occurred in creating book", data });
     }
   });
 };
@@ -112,8 +112,8 @@ export const updateAuthor = (req: any, res: Response, next: NextFunction) => {
 
         let data = await updateAuthorModel(authorId, author, age, address);
         data
-          res.status(201).json({ message: "updates an author", data })
-          // : res.status(400).json({ message: "no author found", data });
+          ? res.status(201).json({ message: "updates an author", data })
+          : res.status(400).json({ message: "no author found", data });
       } catch (error) {
         res.status(400).send(error);
       }
@@ -132,8 +132,8 @@ export const updateBook = async (req: any, res: Response, next: NextFunction) =>
         let { authorId, name, isPublished, serialNumber } = req.body;
         let data = await updateBookModel(bookId, authorId, name, serialNumber, isPublished);
         data
-        res.status(201).json({ message: "updates a book", data })
-          // : res.status(400).json({ message: "no book found", data });
+        ? res.status(201).json({ message: "updates a book", data })
+        : res.status(400).json({ message: "no book found", data });
       } catch (error) {
         res.status(400).send(error);
       }
@@ -151,8 +151,8 @@ export const deleteAuthor = async (req: any, res: Response, next: NextFunction) 
         let { id } = req.params;
         let data = await deleteAuthorModel(id);
         data
-        res.status(201).json({ message: "Trashed!", data })
-          // : res.status(400).json({ message: "error occurred on delete" });
+        ? res.status(201).json({ message: "Trashed!", data })
+        : res.status(400).json({ message: "error occurred on delete" });
       } catch (error) {
         res.status(400).send(error);
       }

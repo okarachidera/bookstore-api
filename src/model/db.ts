@@ -36,6 +36,7 @@ const usersSchema = new mongoose.Schema({
   updatedAt: { type: Date, default: Date.now },
 });
 
+// model
 const Book = mongoose.model("Book", bookSchema);
 const Author = mongoose.model("Author", authorSchema);
 export const Users = mongoose.model("Users", usersSchema);
