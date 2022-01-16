@@ -1,4 +1,4 @@
-# Implemented this API using MongoDB
+# Implemented this API using Express, TypeScript and MongoDB
 
 - The authors and books collection.
 ### Authors collection
