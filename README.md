@@ -1,13 +1,13 @@
-### Implemented this API using MongoDB
+# Implemented this API using Express, TypeScript and MongoDB
 
 - The authors and books collection.
-Authors collection
+### Authors collection
    - Author name
    - Age 
    - Address
    - createdAt
    - updatedAt
-Books collection
+### Books collection
    - AuthorId
    - Book name
    - Published status
@@ -15,7 +15,7 @@ Books collection
    - Serial number
    - createdAt
    - updatedAt
-Users collection for authentication and authorization
+### Users collection for authentication and authorization
    - firstName
    - lastname
    - DOB
