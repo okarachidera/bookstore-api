@@ -1,21 +1,13 @@
-# week-9-task-node-sq009
+# Implemented this API using Express, TypeScript and MongoDB
 
-# Task
-
-# 1. NO_SQL
-
-### Implement this task using MongoDB
-
-### Clarification
-- Convert your week-7/week-7 task database into a NOSQL DB using `MONGODB`.
-- Seperate the authors and books data.
-Authors collection
+- The authors and books collection.
+### Authors collection
    - Author name
    - Age 
    - Address
    - createdAt
    - updatedAt
-Books collection
+### Books collection
    - AuthorId
    - Book name
    - Published status
@@ -23,7 +15,7 @@ Books collection
    - Serial number
    - createdAt
    - updatedAt
-Users collection for authentication and authorization
+### Users collection for authentication and authorization
    - firstName
    - lastname
    - DOB
@@ -31,12 +23,18 @@ Users collection for authentication and authorization
    - phone number (unique)
    - createdAt
    - updatedAt
-- Implement all functionalities as in the previous tasks
-- Implement pagination for both Authors and Books table, `with limit of 5 values for each page`
-- Create Authentication and Authorization for users using a middleware function
+
+## The application should be able to perform.
+- GET Request returns all the data from respective collection
+- POST Request adds data to your authors, books and Users collection.
+- PUT Request updates document in a particular collection
+- DELETE Request removes a document from the collection using the id
+
+## Other features
+- Implemented pagination for both Authors and Books table, `with limit of 5 values for each page`
+- Created Authentication and Authorization for users using a middleware function
 - Implement Validation for incoming request using  **Joi**
 - Only registered users can access all `endpoints`
-- Use mongoDB-compass for local development
 - Authors data format:
 ```js
 {
@@ -75,16 +73,14 @@ Users collection for authentication and authorization
 }
 ```
 
-### Test Coverage (Test is mandatory. No tests equals zero(0) marks):
-- Test your database using mongodb-memory-server
-- Test all endpoints `(GET, POST, PUT, DELETE)`
+### Test Coverage
+- Test database using mongodb-memory-server
+- Tested all endpoints `(GET, POST, PUT, DELETE)`
 
 ### Hosting
-- Host your application on Heroku
+- Hosted application on Heroku
+- https://book-test-api.herokuapp.com/
 
 ### Documentation
-- document your API with postman
-
-
-# 2. Mongo Aggregation Exercise.
-- Go through the readme file in the Folder `MongoAggregation`
+- documentation of API done with postman
+- https://documenter.getpostman.com/view/18331158/UVXhpG9q
