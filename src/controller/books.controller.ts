@@ -51,6 +51,7 @@ export const getAuthor = (req: any, res: Response, _next: NextFunction) => {
 export const getAllBooksForAuthor = async (req: any, res: Response, _next: NextFunction) => {
   // jwt.verify()
   jwt.verify(req.token, mySecret, async function (err: any, data: any) {
+    console.log(req.token, data);
     if (err) {
       //console.log(req.token);
       res.sendStatus(403);
@@ -68,7 +69,7 @@ export const getAllBooksForAuthor = async (req: any, res: Response, _next: NextF
 export const postAuthor = async (req: any, res: Response) => {
   jwt.verify(req.token, mySecret, async (err: any, data: any) => {
     if (err) {
-      //console.log(req.token);
+      console.log(req.token);
       res.sendStatus(403);
     } else {
       try {
