@@ -48,11 +48,12 @@ export const createbooksPolicy = (req: Request, res: Response, next: NextFunctio
     authorId: Joi.string().max(30).regex(/^author/).required(),
     name: Joi.string().max(255).required(),
     isPublished: Joi.boolean().required(),
-    serialNumber: Joi.number().required()
+    serialNumber: Joi.number().required(),
+    image: Joi.string()
   });
   const {authorId}=req.params
-  const { name,isPublished,serialNumber } = req.body;
-  const { error }: any = schema.validate({ authorId, name,isPublished,serialNumber });
+  const { name,isPublished,serialNumber,image } = req.body;
+  const { error }: any = schema.validate({ authorId, name,isPublished,serialNumber,image });
   if (error) {
     return res.status(500).json({ message: error.details[0].message.split('"').join("") });
   }
@@ -63,10 +64,11 @@ export const createauthorPolicy = (req: Request, res: Response, next: NextFuncti
   const schema = Joi.object({
     author: Joi.string().min(2).max(255).required(),
     age: Joi.number().required(),
-    address: Joi.string().min(2).max(255).required()
+    address: Joi.string().min(2).max(255).required(),
+    image: Joi.string().min(2).max(255)
   });
-  const { author,age,address } = req.body;
-  const { error }: any = schema.validate({ author,age,address });
+  const { author,age,address,image } = req.body;
+  const { error }: any = schema.validate({ author,age,address,image });
   if (error) {
     return res.status(501).json({ message: error.details[0].message.split('"').join("") });
   }
@@ -78,11 +80,12 @@ export const updateauthorPolicy = (req: Request, res: Response, next: NextFuncti
     name: Joi.string().min(2).max(255),
     age: Joi.number(),
     address: Joi.string().min(2).max(255),
-    id: Joi.string().regex(/^author/).required()
+    id: Joi.string().regex(/^author/).required(),
+    image: Joi.string().min(2).max(255)
   });
   const {id}=req.params
-  const { name,age,address } = req.body;
-  const { error }: any = schema.validate({ id,name,age,address });
+  const { name,age,address,image } = req.body;
+  const { error }: any = schema.validate({ id,name,age,address,image });
   if (error) {
     return res.status(500).json({ message: error.details[0].message.split('"').join("") });
   }
@@ -96,11 +99,12 @@ export const updatebookPolicy = (req: Request, res: Response, next: NextFunction
     isPublished: Joi.boolean(),
     serialNumber: Joi.number(),
     bookId: Joi.string().regex(/^book/).required(),
-    authorId: Joi.string().regex(/^author/)
+    authorId: Joi.string().regex(/^author/),
+    image: Joi.string().min(2).max(255),
   });
   const {bookId}=req.params
-  const { name,isPublished,serialNumber,authorId } = req.body;
-  const { error }: any = schema.validate({ bookId,name,isPublished,serialNumber,authorId });
+  const { name,isPublished,serialNumber,authorId,image } = req.body;
+  const { error }: any = schema.validate({ bookId,name,isPublished,serialNumber,authorId,image });
   if (error) {
     return res.status(500).json({ message: error.details[0].message.split('"').join("") });
   }
