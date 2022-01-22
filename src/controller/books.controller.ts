@@ -109,9 +109,9 @@ export const updateAuthor = (req: any, res: Response, next: NextFunction) => {
     } else {
       try {
         let authorId = req.params.id;
-        let { author, age, address } = req.body;
+        let { author, age, address,image } = req.body;
 
-        let data = await updateAuthorModel(authorId, author, age, address);
+        let data = await updateAuthorModel(authorId, author, age, address,image);
         data
           ? res.status(201).json({ message: "updates an author", data })
           : res.status(400).json({ message: "no author found", data });
@@ -130,8 +130,8 @@ export const updateBook = async (req: any, res: Response, next: NextFunction) =>
     } else {
       try {
         let { bookId } = req.params;
-        let { authorId, name, isPublished, serialNumber } = req.body;
-        let data = await updateBookModel(bookId, authorId, name, serialNumber, isPublished);
+        let { authorId, name, isPublished, serialNumber,image } = req.body;
+        let data = await updateBookModel(bookId, authorId, name, serialNumber, isPublished,image);
         data
         ? res.status(201).json({ message: "updates a book", data })
         : res.status(400).json({ message: "no book found", data });

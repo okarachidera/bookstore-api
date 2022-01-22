@@ -221,7 +221,7 @@ export async function updateAuthorModel(
 		if (age) result.set({ age: age });
 
 		if (address) result.set({ address: address });
-    result.set({image });
+    result.set({image:image|| avatar.author});
 		result.save();
 		return result;
 	} catch (error) {
@@ -253,7 +253,7 @@ export async function updateBookModel(
 		if (isPublished) result.set({ isPublished: isPublished });
 
 		if (serialNumber) result.set({ serialNumber: `00${serialNumber}` });
-    result.set({ image });
+    result.set({ image:image|| avatar.book});
 
 		result.save();
 		return result;
