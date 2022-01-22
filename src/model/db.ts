@@ -1,10 +1,11 @@
 import mongoose from "mongoose";
 
-const avatar={
-  author:'https://res.cloudinary.com/ckgraphics/image/upload/v1641005399/undraw_profile_pic_ic5t_rkejzu.png',
-  user:'https://res.cloudinary.com/ckgraphics/image/upload/v1641005399/undraw_profile_pic_ic5t_rkejzu.png',
-  book:'https://res.cloudinary.com/ckgraphics/image/upload/v1641005399/undraw_profile_pic_ic5t_rkejzu.png'
-}
+const avatar = {
+	author:
+		"https://res.cloudinary.com/ckgraphics/image/upload/v1641005399/undraw_profile_pic_ic5t_rkejzu.png",
+	user: "https://res.cloudinary.com/ckgraphics/image/upload/v1641005399/undraw_profile_pic_ic5t_rkejzu.png",
+	book: "https://res.cloudinary.com/ckgraphics/image/upload/v1641005399/undraw_profile_pic_ic5t_rkejzu.png",
+};
 const authorSchema = new mongoose.Schema(
 	{
 		id: String,
@@ -12,6 +13,7 @@ const authorSchema = new mongoose.Schema(
 		age: Number,
 		address: String,
 		image: String,
+		cloudinary_id: String,
 	},
 	{ timestamps: true }
 );
@@ -27,6 +29,7 @@ const bookSchema = new mongoose.Schema({
 	datePublished: { type: Date, default: Date.now },
 	serialNumber: String,
 	image: String,
+	cloudinary_id: String,
 	createdAt: { type: Date, default: Date.now },
 	updatedAt: { type: Date, default: Date.now },
 });
@@ -39,7 +42,7 @@ const usersSchema = new mongoose.Schema(
 		email: { type: String, unique: true },
 		phoneNumber: { type: String, unique: true },
 		password: String,
-    image: String,
+		image: String,
 	},
 	{ timestamps: true }
 );
@@ -49,7 +52,13 @@ const Book = mongoose.model("Book", bookSchema);
 const Author = mongoose.model("Author", authorSchema);
 export const Users = mongoose.model("Users", usersSchema);
 
-export async function createAuthor(name: string, age: number, address: string,image?:string) {
+export async function createAuthor(
+	name: string,
+	age: number,
+	address: string,
+	cloudinary_id: string,
+	image?: string,
+) {
 	try {
 		let data = await Author.find();
 		let lastAuthorId = 0;
@@ -61,7 +70,8 @@ export async function createAuthor(name: string, age: number, address: string,im
 			author: name,
 			age,
 			address,
-      image:image||avatar.author
+			image: image || avatar.author,
+			cloudinary_id
 		});
 		const result = await author.save();
 		return result;
@@ -77,7 +87,8 @@ export async function createBook(
 	name: string,
 	isPublished: Boolean,
 	serialNumber: number,
-  image?: string
+	image?: string,
+	cloudinary_id?: string
 ) {
 	try {
 		let data = await Book.find();
@@ -92,7 +103,7 @@ export async function createBook(
 			name: name,
 			isPublished: isPublished,
 			serialNumber: `00${serialNumber}`,
-      image:image || avatar.book
+			image: image || avatar.book,
 		});
 
 		const result = await book.save();
@@ -112,7 +123,7 @@ export async function createUsers(
 	phoneNumber: string,
 	password: string,
 	dob: Date,
-  image?: string
+	image?: string
 ) {
 	try {
 		const users = new Users({
@@ -122,7 +133,7 @@ export async function createUsers(
 			email,
 			phoneNumber,
 			password,
-      image:image|| avatar.user
+			image: image || avatar.user,
 		});
 
 		const result = await users.save();
@@ -205,7 +216,7 @@ export async function updateAuthorModel(
 	name?: string,
 	age?: number,
 	address?: string,
-  image: string = avatar.author
+	image: string = avatar.author
 ) {
 	try {
 		//console.log(name);
@@ -221,7 +232,7 @@ export async function updateAuthorModel(
 		if (age) result.set({ age: age });
 
 		if (address) result.set({ address: address });
-    result.set({image:image|| avatar.author});
+		result.set({ image: image || avatar.author });
 		result.save();
 		return result;
 	} catch (error) {
@@ -237,7 +248,7 @@ export async function updateBookModel(
 	name?: string,
 	isPublished?: boolean,
 	serialNumber?: number,
-  image:string=avatar.book
+	image: string = avatar.book
 ) {
 	try {
 		let data = await Book.find({ id: bookId }).limit(1).select({ _id: 1 });
@@ -253,7 +264,7 @@ export async function updateBookModel(
 		if (isPublished) result.set({ isPublished: isPublished });
 
 		if (serialNumber) result.set({ serialNumber: `00${serialNumber}` });
-    result.set({ image:image|| avatar.book});
+		result.set({ image: image || avatar.book });
 
 		result.save();
 		return result;
@@ -275,4 +286,3 @@ export const deleBookModel = async (bookId: string) => {
 	//console.log(delBooks);
 	return delBooks;
 };
-

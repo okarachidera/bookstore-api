@@ -81,7 +81,8 @@ export const createbooksPolicy = (
 		image: Joi.string().min(2).max(255),
 	});
 	const { authorId } = req.params;
-	const { name, isPublished, serialNumber, image } = req.body;
+	const { name, isPublished, serialNumber} = req.body;
+	const image=req.file?.path
 	const { error }: any = schema.validate({
 		authorId,
 		name,
@@ -108,8 +109,9 @@ export const createauthorPolicy = (
 		address: Joi.string().min(2).max(255).required(),
 		image: Joi.string().min(2).max(255),
 	});
-	const { author, age, address, image } = req.body;
-	const { error }: any = schema.validate({ author, age, address, image });
+	const { author, age, address } = req.body;
+	const image=req.file?.path
+	const { error }: any = schema.validate({ author, age, address,image});
 	if (error) {
 		return res
 			.status(501)

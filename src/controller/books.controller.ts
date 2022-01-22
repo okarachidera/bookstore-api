@@ -14,6 +14,7 @@ import {
   updateAuthorModel,
   updateBookModel,
 } from "../model/db";
+import cloudinaryImage from "../utils/cloudinary";
 
 const mySecret = "PassPass";
 
@@ -73,8 +74,9 @@ export const postAuthor = async (req: any, res: Response) => {
       res.sendStatus(403);
     } else {
       try {
-        let { author, age, address,image } = req.body;
-        let data = await createAuthor(author, age, address,image);
+        let image= await cloudinaryImage.uploader.upload(req.file.path)
+        let { author, age, address } = req.body;
+        let data = await createAuthor(author, age, address,image,image.public_id);
         data
           ?res.status(201).json({ message: "creates new author", data })
           : res.status(400).json({ message: "error occurred in creating author" });
@@ -91,9 +93,10 @@ export const postBook = async (req: any, res: Response) => {
       //console.log(req.token);
       res.sendStatus(403);
     } else {
-      let { name, isPublished, serialNumber,image } = req.body;
+      let image= await cloudinaryImage.uploader.upload(req.file.path)
+      let { name, isPublished, serialNumber } = req.body;
       let { authorId } = req.params;
-      let data = await createBook(authorId, name, isPublished, serialNumber,image );
+      let data = await createBook(authorId, name, isPublished, serialNumber,image.public_id,image.secure_url);
       data
         ? res.status(201).json({ message: "new book added", data })
         : res.status(400).json({ message: "error occurred in creating book", data });
