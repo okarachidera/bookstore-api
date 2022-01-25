@@ -42,6 +42,24 @@ export const oneauthorPolicy = (
 	}
 	return next();
 };
+// get  author by id
+export const allAuthorPolicy = (
+	req: Request,
+	res: Response,
+	next: NextFunction
+) => {
+	const schema = Joi.object({
+		pageno: Joi.number().min(1).required()
+	});
+	const { pageno } = req.params;
+	const { error }: any = schema.validate({ pageno });
+	if (error) {
+		return res
+			.status(500)
+			.json({ message: error.details[0].message.split('"').join("") });
+	}
+	return next();
+};
 // get all books by  author
 export const authorbooksPolicy = (
 	req: Request,
@@ -81,7 +99,7 @@ export const createbooksPolicy = (
 		// image: Joi.string().min(2).max(255),
 	});
 	const { authorId } = req.params;
-	const { name, isPublished, serialNumber} = req.body;
+	const { name, isPublished, serialNumber } = req.body;
 	// const image=req.file?.path
 	const { error }: any = schema.validate({
 		authorId,
@@ -111,7 +129,7 @@ export const createauthorPolicy = (
 	});
 	const { author, age, address } = req.body;
 	// const image=req.file?.path
-	const { error }: any = schema.validate({ author, age, address});
+	const { error }: any = schema.validate({ author, age, address });
 	if (error) {
 		return res
 			.status(501)

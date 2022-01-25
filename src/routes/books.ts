@@ -14,6 +14,7 @@ import jwt from "jsonwebtoken";
 import { User } from "../model/user";
 import imageMulter from "../utils/multerImageUpload";
 import {
+	allAuthorPolicy,
 	authorbooksPolicy,
 	createauthorPolicy,
 	createbooksPolicy,
@@ -26,7 +27,7 @@ import {
 
 const router = express.Router();
 
-router.get("/:pageno", User.verifyToken, getAllAuthor); // gets all authors
+router.get("/:pageno", allAuthorPolicy, User.verifyToken, getAllAuthor); // gets all authors
 router.get("/:authorId", oneauthorPolicy, User.verifyToken, getAuthor); // get author by id
 router.get(
 	"/books/:authorId/:pageno",

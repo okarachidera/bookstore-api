@@ -24,7 +24,6 @@ export const getAllAuthor = async (req: any, res: Response, next: NextFunction) 
     } else {
       let { pageno } = req.params;
       const data = await getAllAuthorsModel(pageno);
-      //console.log(pageno);
 
       res.status(200).send({ message: "retrieved data", data });
     }

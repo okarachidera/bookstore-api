@@ -162,7 +162,7 @@ export async function findAuthUsers(email: string) {
 export async function getAllAuthorsModel(pageNumber: number) {
 	try {
 		let pageSize = 5;
-		const authors = await Author.find().skip(pageNumber).limit(pageSize);
+		const authors = await Author.find().skip(pageNumber-1).limit(pageSize);
 		//console.log(authors);
 		return authors;
 	} catch (error) {
