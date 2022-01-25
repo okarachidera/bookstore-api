@@ -108,7 +108,7 @@ export const postAuthor = async (req: any, res: Response) => {
 								.status(400)
 								.json({ message: "error occurred in creating author" });
 				} catch (error) {
-					res.status(400).send(error);
+					res.status(500).json({message:'author already exists',error});
 				}
 			}
 		}
