@@ -4,7 +4,7 @@ const avatar = {
 	author:
 		"https://res.cloudinary.com/ckgraphics/image/upload/v1641005399/undraw_profile_pic_ic5t_rkejzu.png",
 	user: "https://res.cloudinary.com/ckgraphics/image/upload/v1641005399/undraw_profile_pic_ic5t_rkejzu.png",
-	book: "https://res.cloudinary.com/ckgraphics/image/upload/v1641005399/undraw_profile_pic_ic5t_rkejzu.png",
+	book: "https://res.cloudinary.com/ckgraphics/image/upload/v1643101908/bookstore/books_icon_q3fqh8.png",
 };
 const authorSchema = new mongoose.Schema(
 	{
