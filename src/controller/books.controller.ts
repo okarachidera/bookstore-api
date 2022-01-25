@@ -126,7 +126,7 @@ export const postBook = async (req: any, res: Response) => {
 			} else {
 				// let image= await cloudinaryImage.uploader.upload(req.file.path)
 				let image;
-				let { name, isPublished, serialNumber } = req.body;
+				let { name, isPublished, serialNumber,website } = req.body;
 				let { authorId } = req.params;
 				try {
 					// let data = await createBook(authorId, name, isPublished, serialNumber,image.public_id,image.secure_url);
@@ -135,6 +135,7 @@ export const postBook = async (req: any, res: Response) => {
 						name,
 						isPublished,
 						serialNumber,
+            website,
 						image,
 						image
 					);

@@ -96,16 +96,18 @@ export const createbooksPolicy = (
 		name: Joi.string().max(255).required(),
 		isPublished: Joi.boolean().required(),
 		serialNumber: Joi.number().required(),
+		website: Joi.string().min(7).max(255).regex(/^http/).required()
 		// image: Joi.string().min(2).max(255),
 	});
 	const { authorId } = req.params;
-	const { name, isPublished, serialNumber } = req.body;
+	const { name, isPublished, serialNumber,website } = req.body;
 	// const image=req.file?.path
 	const { error }: any = schema.validate({
 		authorId,
 		name,
 		isPublished,
 		serialNumber,
+		website
 		// image,
 	});
 	if (error) {

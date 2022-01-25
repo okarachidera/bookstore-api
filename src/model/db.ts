@@ -28,6 +28,7 @@ const bookSchema = new mongoose.Schema({
 	isPublished: Boolean,
 	datePublished: { type: Date, default: Date.now },
 	serialNumber: String,
+	website: String,
 	image: String,
 	cloudinary_id: String,
 	createdAt: { type: Date, default: Date.now },
@@ -87,6 +88,7 @@ export async function createBook(
 	name: string,
 	isPublished: Boolean,
 	serialNumber: number,
+	website: string,
 	image?: string,
 	cloudinary_id?: string
 ) {
@@ -104,6 +106,7 @@ export async function createBook(
 			isPublished: isPublished,
 			serialNumber: `00${serialNumber}`,
 			image: image || avatar.book,
+			website
 		});
 
 		const result = await book.save();
