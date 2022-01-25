@@ -24,7 +24,7 @@ const bookSchema = new mongoose.Schema({
 		type: mongoose.Schema.Types.String,
 		ref: "Author",
 	},
-	name: String,
+	name: {type:String, unique: true},
 	isPublished: Boolean,
 	datePublished: { type: Date, default: Date.now },
 	serialNumber: String,
@@ -277,7 +277,7 @@ export async function updateBookModel(
 
 export const deleteAuthorModel = async (authorId: string) => {
 	const delAuthors = await Author.deleteOne({ id: authorId });
-	const delBooks = await Book.deleteMany({ authorId: authorId });
+	const delBooks = await Book.deleteOne({ authorId: authorId });
 	return { delAuthors, delBooks };
 };
 

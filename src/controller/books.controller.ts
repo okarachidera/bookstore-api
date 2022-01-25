@@ -16,10 +16,8 @@ import {
 } from "../model/db";
 import cloudinaryImage from "../utils/cloudinary";
 
-const mySecret = "PassPass";
-
 export const getAllAuthor = async (req: any, res: Response, next: NextFunction) => {
-  jwt.verify(req.token, mySecret, async function (err: any, data: any) {
+  jwt.verify(req.token, process.env.JWT_SECRET_KEY as string, async function (err: any, data: any) {
     if (err) {
       //console.log(req.token);
       res.sendStatus(403);
@@ -34,7 +32,7 @@ export const getAllAuthor = async (req: any, res: Response, next: NextFunction) 
 };
 
 export const getAuthor = (req: any, res: Response, _next: NextFunction) => {
-  jwt.verify(req.token, mySecret, async function (err: any, data: any) {
+  jwt.verify(req.token, process.env.JWT_SECRET_KEY as string, async function (err: any, data: any) {
     if (err) {
       //console.log(req.token);
       res.sendStatus(403);
@@ -51,7 +49,7 @@ export const getAuthor = (req: any, res: Response, _next: NextFunction) => {
 
 export const getAllBooksForAuthor = async (req: any, res: Response, _next: NextFunction) => {
   // jwt.verify()
-  jwt.verify(req.token, mySecret, async function (err: any, data: any) {
+  jwt.verify(req.token, process.env.JWT_SECRET_KEY as string, async function (err: any, data: any) {
     console.log(req.token, data);
     if (err) {
       //console.log(req.token);
@@ -68,7 +66,7 @@ export const getAllBooksForAuthor = async (req: any, res: Response, _next: NextF
 };
 
 export const postAuthor = async (req: any, res: Response) => {
-  jwt.verify(req.token, mySecret, async (err: any, data: any) => {
+  jwt.verify(req.token, process.env.JWT_SECRET_KEY as string, async (err: any, data: any) => {
     if (err) {
       console.log(req.token);
       res.sendStatus(403);
@@ -90,7 +88,7 @@ export const postAuthor = async (req: any, res: Response) => {
 };
 
 export const postBook = async (req: any, res: Response) => {
-  jwt.verify(req.token, mySecret, async (err: any, data: any) => {
+  jwt.verify(req.token, process.env.JWT_SECRET_KEY as string, async (err: any, data: any) => {
     if (err) {
       console.log(req.token);
       res.sendStatus(403);
@@ -109,7 +107,7 @@ export const postBook = async (req: any, res: Response) => {
 };
 
 export const updateAuthor = (req: any, res: Response, next: NextFunction) => {
-  jwt.verify(req.token, mySecret, async (err: any, data: any) => {
+  jwt.verify(req.token, process.env.JWT_SECRET_KEY as string, async (err: any, data: any) => {
     if (err) {
       //console.log(req.token);
       res.sendStatus(403);
@@ -130,7 +128,7 @@ export const updateAuthor = (req: any, res: Response, next: NextFunction) => {
 };
 
 export const updateBook = async (req: any, res: Response, next: NextFunction) => {
-  jwt.verify(req.token, mySecret, async (err: any, data: any) => {
+  jwt.verify(req.token, process.env.JWT_SECRET_KEY as string, async (err: any, data: any) => {
     if (err) {
       //console.log(req.token);
       res.sendStatus(403);
@@ -150,7 +148,7 @@ export const updateBook = async (req: any, res: Response, next: NextFunction) =>
 };
 
 export const deleteAuthor = async (req: any, res: Response, next: NextFunction) => {
-  jwt.verify(req.token, mySecret, async (err: any, data: any) => {
+  jwt.verify(req.token, process.env.JWT_SECRET_KEY as string, async (err: any, data: any) => {
     if (err) {
       //console.log(req.token);
       res.sendStatus(403);
@@ -169,7 +167,7 @@ export const deleteAuthor = async (req: any, res: Response, next: NextFunction) 
 };
 
 export const deleteBook = async (req: any, res: Response, next: NextFunction) => {
-  jwt.verify(req.token, mySecret, async (err: any, data: any) => {
+  jwt.verify(req.token, process.env.JWT_SECRET_KEY as string, async (err: any, data: any) => {
     if (err) {
       //console.log(req.token);
       res.sendStatus(403);
