@@ -56,7 +56,7 @@ export async function createAuthor(
 	name: string,
 	age: number,
 	address: string,
-	cloudinary_id: string,
+	cloudinary_id?: string,
 	image?: string,
 ) {
 	try {

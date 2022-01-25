@@ -38,14 +38,14 @@ router.post(
 	"/",
 	createauthorPolicy,
 	User.verifyToken,
-	imageMulter.single("Image"),
+	// imageMulter.single("image"),
 	postAuthor
 ); // post author
 router.post(
 	"/:authorId/book",
 	createbooksPolicy,
 	User.verifyToken,
-	imageMulter.single("Image"),
+	// imageMulter.single("image"),
 	postBook
 ); // post book by author id and book id
 router.put("/:id", updateauthorPolicy, User.verifyToken, updateAuthor); // update author by author id
