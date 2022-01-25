@@ -9,7 +9,7 @@ const avatar = {
 const authorSchema = new mongoose.Schema(
 	{
 		id: String,
-		author: String,
+		author: { type: String, unique: true },
 		age: Number,
 		address: String,
 		image: String,
@@ -24,7 +24,7 @@ const bookSchema = new mongoose.Schema({
 		type: mongoose.Schema.Types.String,
 		ref: "Author",
 	},
-	name: {type:String, unique: true},
+	name: { type: String, unique: true },
 	isPublished: Boolean,
 	datePublished: { type: Date, default: Date.now },
 	serialNumber: String,
@@ -57,7 +57,7 @@ export async function createAuthor(
 	age: number,
 	address: string,
 	cloudinary_id?: string,
-	image?: string,
+	image?: string
 ) {
 	try {
 		let data = await Author.find();
@@ -71,7 +71,7 @@ export async function createAuthor(
 			age,
 			address,
 			image: image || avatar.author,
-			cloudinary_id
+			cloudinary_id,
 		});
 		const result = await author.save();
 		return result;
@@ -161,7 +161,9 @@ export async function findAuthUsers(email: string) {
 export async function getAllAuthorsModel(pageNumber: number) {
 	try {
 		let pageSize = 5;
-		const authors = await Author.find().skip(pageNumber-1).limit(pageSize);
+		const authors = await Author.find()
+			.skip(pageNumber - 1)
+			.limit(pageSize);
 		//console.log(authors);
 		return authors;
 	} catch (error) {
@@ -188,7 +190,7 @@ export async function getAllBooksByAuthorModel(
 	try {
 		let pageSize = 5;
 		const books = await Book.find({ authorid: authorId })
-			.skip(pageNumber-1)
+			.skip(pageNumber - 1)
 			.limit(pageSize);
 		//console.log(books);
 		return books;
