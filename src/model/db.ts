@@ -278,7 +278,7 @@ export async function updateBookModel(
 
 export const deleteAuthorModel = async (authorId: string) => {
 	const delAuthors = await Author.deleteOne({ id: authorId });
-	const delBooks = await Book.deleteOne({ authorId: authorId });
+	const delBooks = await deletebookbyauthor(authorId)
 	return { delAuthors, delBooks };
 };
 
@@ -287,3 +287,11 @@ export const deleBookModel = async (bookId: string) => {
 	//console.log(delBooks);
 	return delBooks;
 };
+
+// helper method for deleteAuthorModel
+async function deletebookbyauthor(id: string) {
+	const delBooks = await Book.deleteMany({authorid:id})
+	return new Promise((resolve, reject) => {
+		resolve(delBooks)
+	})
+}
