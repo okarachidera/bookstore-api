@@ -189,7 +189,7 @@ export async function getAllBooksByAuthorModel(
 	try {
 		let pageSize = 5;
 		const books = await Book.find({ authorid: authorId })
-			.skip(pageNumber)
+			.skip(pageNumber-1)
 			.limit(pageSize);
 		//console.log(books);
 		return books;

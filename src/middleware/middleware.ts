@@ -71,7 +71,7 @@ export const authorbooksPolicy = (
 			.max(30)
 			.regex(/^author/)
 			.required(),
-		pageno: Joi.number().max(255).required(),
+		pageno: Joi.number().min(1).required(),
 	});
 	const { authorId, pageno } = req.params;
 	const { error }: any = schema.validate({ authorId, pageno });
