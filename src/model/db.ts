@@ -107,7 +107,6 @@ export async function createBook(
 		});
 
 		const result = await book.save();
-		//console.log(result);
 		return result;
 	} catch (error) {
 		//console.log(error);
