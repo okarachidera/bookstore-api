@@ -98,8 +98,8 @@ export const postAuthor = async (req: any, res: Response) => {
 			} else {
 				try {
 					// let image= await cloudinaryImage.uploader.upload(req.file.path)
-					let image;
-					let { author, age, address } = req.body;
+					
+					let { author, age, address ,image} = req.body;
 					// let data = await createAuthor(author, age, address,image,image.public_id);
 					let data = await createAuthor(author, age, address, image, image);
 					data

@@ -60,6 +60,8 @@ export async function createAuthor(
 	cloudinary_id?: string,
 	image?: string
 ) {
+	console.log(image,'test me now');
+	
 	try {
 		let data = await Author.find();
 		let lastAuthorId = 0;
