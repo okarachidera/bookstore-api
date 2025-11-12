@@ -1,16 +1,8 @@
-import express, { NextFunction, Response, Request } from 'express';
+import express, { Response, Request } from "express";
 const router = express.Router();
-import { User } from "../model/user";
 
-import {getAllAuthor} from '../controller/books.controller';
-
-
-
-router.get('/',(req: Request, res: Response)=>{
-    res.render('home')
-}) // gets all authors
-
-
-
+router.get("/", (_req: Request, res: Response) => {
+	res.redirect("/docs");
+});
 
 export default router;

@@ -6,9 +6,10 @@ const avatar = {
 	user: "https://res.cloudinary.com/ckgraphics/image/upload/v1641005399/undraw_profile_pic_ic5t_rkejzu.png",
 	book: "https://res.cloudinary.com/ckgraphics/image/upload/v1643101908/bookstore/books_icon_q3fqh8.png",
 };
+
 const authorSchema = new mongoose.Schema(
 	{
-		id: String,
+		id: { type: String, unique: true },
 		author: { type: String, unique: true },
 		age: Number,
 		address: String,
@@ -18,22 +19,25 @@ const authorSchema = new mongoose.Schema(
 	{ timestamps: true }
 );
 
-const bookSchema = new mongoose.Schema({
-	id: String,
-	authorid: {
-		type: mongoose.Schema.Types.String,
-		ref: "Author",
+const bookSchema = new mongoose.Schema(
+	{
+		id: { type: String, unique: true },
+		authorid: {
+			type: mongoose.Schema.Types.String,
+			ref: "Author",
+		},
+		name: { type: String, unique: true },
+		isPublished: Boolean,
+		datePublished: { type: Date, default: Date.now },
+		serialNumber: String,
+		website: String,
+		image: String,
+		cloudinary_id: String,
+		createdAt: { type: Date, default: Date.now },
+		updatedAt: { type: Date, default: Date.now },
 	},
-	name: { type: String, unique: true },
-	isPublished: Boolean,
-	datePublished: { type: Date, default: Date.now },
-	serialNumber: String,
-	website: String,
-	image: String,
-	cloudinary_id: String,
-	createdAt: { type: Date, default: Date.now },
-	updatedAt: { type: Date, default: Date.now },
-});
+	{ timestamps: true }
+);
 
 const usersSchema = new mongoose.Schema(
 	{
@@ -53,6 +57,18 @@ const Book = mongoose.model("Book", bookSchema);
 const Author = mongoose.model("Author", authorSchema);
 export const Users = mongoose.model("Users", usersSchema);
 
+const getNumericSuffix = (value: string, prefix: string): number => {
+	if (!value?.startsWith(prefix)) return 0;
+	const parsed = parseInt(value.replace(prefix, ""), 10);
+	return Number.isNaN(parsed) ? 0 : parsed;
+};
+
+const nextIdentifier = async (model: mongoose.Model<any>, prefix: string) => {
+	const lastRecord = await model.findOne().sort({ createdAt: -1 }).select("id");
+	const lastId = lastRecord?.id ? getNumericSuffix(lastRecord.id, prefix) : 0;
+	return `${prefix}${lastId + 1}`;
+};
+
 export async function createAuthor(
 	name: string,
 	age: number,
@@ -60,16 +76,9 @@ export async function createAuthor(
 	cloudinary_id?: string,
 	image?: string
 ) {
-	console.log(image,'test me now');
-	
 	try {
-		let data = await Author.find();
-		let lastAuthorId = 0;
-		if (data.length > 0) {
-			lastAuthorId = parseInt(data[data.length - 1].id.split("r")[1]);
-		}
 		const author = new Author({
-			id: `author${lastAuthorId + 1}`,
+			id: await nextIdentifier(Author, "author"),
 			author: name,
 			age,
 			address,
@@ -88,33 +97,28 @@ export async function createAuthor(
 export async function createBook(
 	authorid: string,
 	name: string,
-	isPublished: Boolean,
-	serialNumber: number,
-	website: string,
+	isPublished: boolean,
+	serialNumber: number | string,
+	website?: string,
 	image?: string,
 	cloudinary_id?: string
 ) {
 	try {
-		let data = await Book.find();
-		let lastBookId = 0;
-		if (data.length > 0) {
-			lastBookId = parseInt(data[data.length - 1].id.split("k")[1]);
-		}
-
+		const formattedSerial = `00${serialNumber}`.toString().slice(-4);
 		const book = new Book({
-			id: `book${lastBookId + 1}`,
-			authorid: authorid,
-			name: name,
-			isPublished: isPublished,
-			serialNumber: `00${serialNumber}`,
+			id: await nextIdentifier(Book, "book"),
+			authorid,
+			name,
+			isPublished,
+			serialNumber: formattedSerial,
 			image: image || avatar.book,
-			website
+			website,
+			cloudinary_id,
 		});
 
 		const result = await book.save();
 		return result;
 	} catch (error) {
-		//console.log(error);
 		return new Promise((resolve: any, reject: any) => {
 			reject(error);
 		});
@@ -163,16 +167,28 @@ export async function findAuthUsers(email: string) {
 	}
 }
 
-export async function getAllAuthorsModel(pageNumber: number) {
+export async function getAllAuthorsModel(pageNumber = 1) {
 	try {
-		let pageSize = 5;
-		const authors = await Author.find()
-			.skip(pageNumber - 1)
-			.limit(pageSize);
-		//console.log(authors);
-		return authors;
+		const pageSize = 5;
+		const safePage = pageNumber > 0 ? pageNumber : 1;
+		const [authors, total] = await Promise.all([
+			Author.find()
+				.sort({ createdAt: -1 })
+				.skip((safePage - 1) * pageSize)
+				.limit(pageSize),
+			Author.countDocuments(),
+		]);
+
+		return {
+			items: authors,
+			meta: {
+				page: safePage,
+				pageSize,
+				total,
+				totalPages: Math.ceil(total / pageSize),
+			},
+		};
 	} catch (error) {
-		//console.log(error);
 		return new Promise((resolve, reject) => {
 			reject(error);
 		});
@@ -180,7 +196,7 @@ export async function getAllAuthorsModel(pageNumber: number) {
 }
 export async function getOneAuthor(authorid: string) {
 	try {
-		const author = await Author.find({ id: authorid });
+		const author = await Author.findOne({ id: authorid });
 		return author;
 	} catch (error) {
 		return new Promise((resolve, reject) => {
@@ -190,24 +206,36 @@ export async function getOneAuthor(authorid: string) {
 }
 export async function getAllBooksByAuthorModel(
 	authorId: string,
-	pageNumber: number
+	pageNumber = 1
 ) {
 	try {
-		let pageSize = 5;
-		const books = await Book.find({ authorid: authorId })
-			.skip(pageNumber - 1)
-			.limit(pageSize);
-		//console.log(books);
-		return books;
+		const pageSize = 5;
+		const safePage = pageNumber > 0 ? pageNumber : 1;
+		const [books, total] = await Promise.all([
+			Book.find({ authorid: authorId })
+				.sort({ createdAt: -1 })
+				.skip((safePage - 1) * pageSize)
+				.limit(pageSize),
+			Book.countDocuments({ authorid: authorId }),
+		]);
+
+		return {
+			items: books,
+			meta: {
+				page: safePage,
+				pageSize,
+				total,
+				totalPages: Math.ceil(total / pageSize),
+			},
+		};
 	} catch (error) {
-		//console.log(error);
 		return error;
 	}
 }
 
 export async function getOneBook(id: string) {
 	try {
-		const books = await Book.find({ id });
+		const books = await Book.findOne({ id });
 		return books;
 	} catch (error) {
 		return new Promise((resolve, reject) => {
@@ -222,25 +250,25 @@ export async function updateAuthorModel(
 	name?: string,
 	age?: number,
 	address?: string,
-	image: string = avatar.author
+	image?: string
 ) {
 	try {
-		//console.log(name);
+		const author = await Author.findOne({ id: authorId });
 
-		let data = await Author.find({ id: authorId }).limit(1).select({ _id: 1 });
+		if (!author) return null;
 
-		const result = await Author.findById(data);
+		if (typeof name === "string") author.set({ author: name });
 
-		if (!result) return;
+		if (typeof age === "number") author.set({ age });
 
-		if (name) result.set({ author: name });
+		if (typeof address === "string") author.set({ address });
 
-		if (age) result.set({ age: age });
+		if (typeof image === "string" && image.length > 0) {
+			author.set({ image });
+		}
 
-		if (address) result.set({ address: address });
-		result.set({ image: image || avatar.author });
-		result.save();
-		return result;
+		await author.save();
+		return author;
 	} catch (error) {
 		return new Promise((resolve, reject) => {
 			reject(error);
@@ -254,26 +282,33 @@ export async function updateBookModel(
 	name?: string,
 	isPublished?: boolean,
 	serialNumber?: number,
-	image: string = avatar.book
+	image?: string,
+	website?: string
 ) {
 	try {
-		let data = await Book.find({ id: bookId }).limit(1).select({ _id: 1 });
+		const book = await Book.findOne({ id: bookId });
 
-		const result = await Book.findById(data);
+		if (!book) return null;
 
-		if (!result) return;
+		if (typeof name === "string") book.set({ name });
 
-		if (name) result.set({ name: name });
+		if (typeof authorId === "string") book.set({ authorid: authorId });
 
-		if (authorId) result.set({ authorid: authorId });
+		if (typeof isPublished === "boolean") book.set({ isPublished });
 
-		if (isPublished) result.set({ isPublished: isPublished });
+		if (typeof serialNumber === "number")
+			book.set({ serialNumber: `00${serialNumber}` });
 
-		if (serialNumber) result.set({ serialNumber: `00${serialNumber}` });
-		result.set({ image: image || avatar.book });
+		if (typeof image === "string" && image.length > 0) {
+			book.set({ image });
+		}
 
-		result.save();
-		return result;
+		if (typeof website === "string") {
+			book.set({ website });
+		}
+
+		await book.save();
+		return book;
 	} catch (error) {
 		return new Promise((resolve, reject) => {
 			reject(error);

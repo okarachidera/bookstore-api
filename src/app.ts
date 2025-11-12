@@ -6,6 +6,8 @@ import logger from 'morgan'
 import booksRouter from './routes/books'
 import cors from 'cors';
 import dotenv from "dotenv";
+import swaggerUi from 'swagger-ui-express';
+import swaggerSpec from './config/swagger';
 
 dotenv.config()
 
@@ -32,6 +34,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, { explorer: true }));
 
 // connect db
 if(process.env.NODE_ENV === 'test'){
@@ -39,8 +42,6 @@ if(process.env.NODE_ENV === 'test'){
 }else{
   connectDB()
 }
-
-console.log(process.env.NODE_ENV,process.env.JWT_SECRET_KEY);
 
 // connectDB()
 

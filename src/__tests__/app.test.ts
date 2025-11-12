@@ -30,7 +30,6 @@ describe("POST /signup", () => {
       .post("/users/login")
       .send({ email: loginData.email, password: loginData.password });
     token = response.body.token;
-    console.log(response.body);
     expect(response.status).toBe(200);
     expect(response.body.loginStatus).toBe("Access Granted");
   });
@@ -82,6 +81,7 @@ describe("books", () => {
     name: "Sunrise",
     isPublished: true,
     serialNumber: 3,
+    website: "https://example.com/sunrise",
   };
 
   test("create a book", async () => {
@@ -97,7 +97,7 @@ describe("books", () => {
 
   test("get all books by  author", async () => {
     const response = await supertest(app)
-      .get(`/author/books/${authorId}/${0}`)
+      .get(`/author/${authorId}/books/page/1`)
       .set("Authorization", `Bearer ${token}`);
     //console.log(`/author/books/${authorId}/${bookId}/${0}`);
     // console.log(response.body.book.name);
@@ -109,12 +109,12 @@ describe("books", () => {
       name: "Sunset",
       isPublished: false,
       serialNumber: 9,
+      website: "https://example.com/sunset",
     };
     const response = await supertest(app)
       .put(`/author/book/${bookId}`)
       .set("Authorization", `Bearer ${token}`)
-      .send();
-    console.log(response.body, "dsdsdsdsd");
+      .send(bookData);
     expect(response.status).toBe(201);
     expect(response.body.message).toBe("updates a book");
   });

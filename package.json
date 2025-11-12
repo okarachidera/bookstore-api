@@ -3,13 +3,14 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "prestart": "npm run build",
     "start": "CI= node ./bin/www",
-    "dev": "nodemon ./bin/www",
+    "dev": "nodemon --legacy-watch --watch src --ext ts,json --exec \"npm run build && node ./bin/www\"",
     "build": "tsc",
     "test": "jest --runInBand",
-    "compile": "yarn tsc -w",
+    "compile": "tsc -w",
     "clean": "rm -rf dist && mkdir dist",
-    "heroku-postbuild": "yarn clean && yarn build"
+    "heroku-postbuild": "npm run clean && npm run build"
   },
   "dependencies": {
     "@types/bcrypt": "^5.0.0",
@@ -33,6 +34,8 @@
     "mongoose": "^6.11.3",
     "morgan": "~1.9.1",
     "multer": "^2.0.2",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1",
     "ts-jest": "^27.0.7",
     "typescript": "^4.5.2",
     "uuid": "^8.3.2"
@@ -47,6 +50,8 @@
     "@types/jest": "^27.0.3",
     "@types/morgan": "^1.9.3",
     "@types/supertest": "^2.0.11",
+    "@types/swagger-jsdoc": "^6.0.4",
+    "@types/swagger-ui-express": "^4.1.8",
     "babel-jest": "^27.3.1",
     "jest": "^27.3.1",
     "mongodb-memory-server": "^8.1.0",

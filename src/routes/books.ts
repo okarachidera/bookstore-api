@@ -1,4 +1,4 @@
-import express, { NextFunction, Request, Response } from "express";
+import express from "express";
 import {
 	getAllAuthor,
 	postAuthor,
@@ -10,9 +10,7 @@ import {
 	getAuthor,
 	postBook,
 } from "../controller/books.controller";
-import jwt from "jsonwebtoken";
 import { User } from "../model/user";
-import imageMulter from "../utils/multerImageUpload";
 import {
 	allAuthorPolicy,
 	authorbooksPolicy,
@@ -27,10 +25,10 @@ import {
 
 const router = express.Router();
 
-router.get("/:pageno", allAuthorPolicy, User.verifyToken, getAllAuthor); // gets all authors
-router.get("/:authorId", oneauthorPolicy, User.verifyToken, getAuthor); // get author by id
+router.get("/page/:pageno", allAuthorPolicy, User.verifyToken, getAllAuthor); // gets all authors
+router.get("/id/:authorId", oneauthorPolicy, User.verifyToken, getAuthor); // get author by id
 router.get(
-	"/books/:authorId/:pageno",
+	"/:authorId/books/page/:pageno",
 	authorbooksPolicy,
 	User.verifyToken,
 	getAllBooksForAuthor
@@ -39,14 +37,12 @@ router.post(
 	"/",
 	createauthorPolicy,
 	User.verifyToken,
-	// imageMulter.single("image"),
 	postAuthor
 ); // post author
 router.post(
 	"/:authorId/book",
 	createbooksPolicy,
 	User.verifyToken,
-	// imageMulter.single("image"),
 	postBook
 ); // post book by author id and book id
 router.put("/:id", updateauthorPolicy, User.verifyToken, updateAuthor); // update author by author id

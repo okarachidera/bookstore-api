@@ -1,7 +1,5 @@
-import express, { Request, Response, NextFunction } from "express";
-import { readFile, writeFile, author, errInt } from "../utils/utils";
-import { generateIdsForBooks, validateEntry } from "../utils/utils";
-import jwt, { VerifyOptions } from "jsonwebtoken";
+import { Request, Response, NextFunction } from "express";
+import jwt from "jsonwebtoken";
 import {
 	createAuthor,
 	createBook,
@@ -10,27 +8,39 @@ import {
 	getAllAuthorsModel,
 	getAllBooksByAuthorModel,
 	getOneAuthor,
-	getOneBook,
 	updateAuthorModel,
 	updateBookModel,
 } from "../model/db";
-import cloudinaryImage from "../utils/cloudinary";
+
+type RequestWithToken = Request & { token?: string };
+
+const parsePageNumber = (value?: string | string[]) => {
+	const asString = Array.isArray(value) ? value[0] : value;
+	const parsed = parseInt(asString || "1", 10);
+	return Number.isNaN(parsed) || parsed < 1 ? 1 : parsed;
+};
 
 export const getAllAuthor = async (
-	req: any,
+	req: Request,
 	res: Response,
 	next: NextFunction
 ) => {
+	const requestWithToken = req as RequestWithToken;
+	if (!requestWithToken.token) {
+		return res.sendStatus(403);
+	}
 	jwt.verify(
-		req.token,
+		requestWithToken.token as string,
 		process.env.JWT_SECRET_KEY as string,
 		async function (err: any, data: any) {
 			if (err) {
 				//console.log(req.token);
 				res.sendStatus(403);
 			} else {
-				let { pageno } = req.params;
-				const data = await getAllAuthorsModel(pageno);
+				const pageNumber = parsePageNumber(
+					req.params.pageno || (req.query.page as string | undefined)
+				);
+				const data = await getAllAuthorsModel(pageNumber);
 
 				res.status(200).send({ message: "retrieved data", data });
 			}
@@ -38,9 +48,17 @@ export const getAllAuthor = async (
 	);
 };
 
-export const getAuthor = (req: any, res: Response, _next: NextFunction) => {
+export const getAuthor = (
+	req: Request,
+	res: Response,
+	_next: NextFunction
+) => {
+	const requestWithToken = req as RequestWithToken;
+	if (!requestWithToken.token) {
+		return res.sendStatus(403);
+	}
 	jwt.verify(
-		req.token,
+		requestWithToken.token as string,
 		process.env.JWT_SECRET_KEY as string,
 		async function (err: any, data: any) {
 			if (err) {
@@ -48,7 +66,7 @@ export const getAuthor = (req: any, res: Response, _next: NextFunction) => {
 				res.sendStatus(403);
 			} else {
 				try {
-					const data = await getOneAuthor(req.params.id);
+					const data = await getOneAuthor(req.params.authorId);
 					res.status(200).json({ message: "success", data: data });
 				} catch (error) {
 					res.status(400).json({ error });
@@ -59,24 +77,29 @@ export const getAuthor = (req: any, res: Response, _next: NextFunction) => {
 };
 
 export const getAllBooksForAuthor = async (
-	req: any,
+	req: Request,
 	res: Response,
 	_next: NextFunction
 ) => {
+	const requestWithToken = req as RequestWithToken;
 	// jwt.verify()
+	if (!requestWithToken.token) {
+		return res.sendStatus(403);
+	}
 	jwt.verify(
-		req.token,
+		requestWithToken.token as string,
 		process.env.JWT_SECRET_KEY as string,
 		async function (err: any, data: any) {
-			console.log(req.token, data);
 			if (err) {
 				//console.log(req.token);
 				res.sendStatus(403);
 			} else {
 				try {
+					const { authorId } = req.params;
+					const pageNumber = parsePageNumber(req.params.pageno);
 					const data = await getAllBooksByAuthorModel(
-						req.params.authorId,
-						req.params.pageno
+						authorId,
+						pageNumber
 					);
 					res.status(200).json({ response: "success", data });
 				} catch (error) {
@@ -87,21 +110,35 @@ export const getAllBooksForAuthor = async (
 	);
 };
 
-export const postAuthor = async (req: any, res: Response) => {
+export const postAuthor = async (req: Request, res: Response) => {
+	const requestWithToken = req as RequestWithToken;
+	if (!requestWithToken.token) {
+		return res.sendStatus(403);
+	}
 	jwt.verify(
-		req.token,
+		requestWithToken.token as string,
 		process.env.JWT_SECRET_KEY as string,
 		async (err: any, data: any) => {
 			if (err) {
-				console.log(req.token);
 				res.sendStatus(403);
 			} else {
 				try {
 					// let image= await cloudinaryImage.uploader.upload(req.file.path)
 					
-					let { author, age, address ,image} = req.body;
-					// let data = await createAuthor(author, age, address,image,image.public_id);
-					let data = await createAuthor(author, age, address, image, image);
+					let { author, age, address, image } = req.body;
+					const parsedAge = Number(age);
+					if (Number.isNaN(parsedAge)) {
+						return res
+							.status(400)
+							.json({ message: "Age must be a valid number" });
+					}
+					let data = await createAuthor(
+						author,
+						parsedAge,
+						address,
+						image,
+						image
+					);
 					data
 						? res.status(201).json({ message: "creates new author", data })
 						: res
@@ -115,27 +152,40 @@ export const postAuthor = async (req: any, res: Response) => {
 	);
 };
 
-export const postBook = async (req: any, res: Response) => {
+export const postBook = async (req: Request, res: Response) => {
+	const requestWithToken = req as RequestWithToken;
+	if (!requestWithToken.token) {
+		return res.sendStatus(403);
+	}
 	jwt.verify(
-		req.token,
+		requestWithToken.token as string,
 		process.env.JWT_SECRET_KEY as string,
 		async (err: any, data: any) => {
 			if (err) {
-				console.log(req.token);
 				res.sendStatus(403);
 			} else {
 				// let image= await cloudinaryImage.uploader.upload(req.file.path)
 				let image;
 				let { name, isPublished, serialNumber,website } = req.body;
 				let { authorId } = req.params;
+				const normalizedIsPublished =
+					typeof isPublished === "string"
+						? isPublished === "true"
+						: Boolean(isPublished);
+				const parsedSerial = Number(serialNumber);
+				if (Number.isNaN(parsedSerial)) {
+					return res
+						.status(400)
+						.json({ message: "serialNumber must be a valid number" });
+				}
 				try {
 					// let data = await createBook(authorId, name, isPublished, serialNumber,image.public_id,image.secure_url);
 					let data = await createBook(
 						authorId,
 						name,
-						isPublished,
-						serialNumber,
-            website,
+						normalizedIsPublished,
+						parsedSerial,
+						website,
 						image,
 						image
 					);
@@ -154,9 +204,17 @@ export const postBook = async (req: any, res: Response) => {
 	);
 };
 
-export const updateAuthor = (req: any, res: Response, next: NextFunction) => {
+export const updateAuthor = (
+	req: Request,
+	res: Response,
+	next: NextFunction
+) => {
+	const requestWithToken = req as RequestWithToken;
+	if (!requestWithToken.token) {
+		return res.sendStatus(403);
+	}
 	jwt.verify(
-		req.token,
+		requestWithToken.token as string,
 		process.env.JWT_SECRET_KEY as string,
 		async (err: any, data: any) => {
 			if (err) {
@@ -166,11 +224,12 @@ export const updateAuthor = (req: any, res: Response, next: NextFunction) => {
 				try {
 					let authorId = req.params.id;
 					let { author, age, address, image } = req.body;
+					const parsedAge = Number(age);
 
 					let data = await updateAuthorModel(
 						authorId,
 						author,
-						age,
+						Number.isNaN(parsedAge) ? undefined : parsedAge,
 						address,
 						image
 					);
@@ -186,12 +245,16 @@ export const updateAuthor = (req: any, res: Response, next: NextFunction) => {
 };
 
 export const updateBook = async (
-	req: any,
+	req: Request,
 	res: Response,
 	next: NextFunction
 ) => {
+	const requestWithToken = req as RequestWithToken;
+	if (!requestWithToken.token) {
+		return res.sendStatus(403);
+	}
 	jwt.verify(
-		req.token,
+		requestWithToken.token as string,
 		process.env.JWT_SECRET_KEY as string,
 		async (err: any, data: any) => {
 			if (err) {
@@ -200,14 +263,21 @@ export const updateBook = async (
 			} else {
 				try {
 					let { bookId } = req.params;
-					let { authorId, name, isPublished, serialNumber, image } = req.body;
+					let { authorId, name, isPublished, serialNumber, image, website } =
+						req.body;
+					const parsedSerial = Number(serialNumber);
+					const normalizedIsPublished =
+						typeof isPublished === "string"
+							? isPublished === "true"
+							: isPublished;
 					let data = await updateBookModel(
 						bookId,
 						authorId,
 						name,
-						serialNumber,
-						isPublished,
-						image
+						normalizedIsPublished,
+						Number.isNaN(parsedSerial) ? undefined : parsedSerial,
+						image,
+						website
 					);
 					data
 						? res.status(201).json({ message: "updates a book", data })
@@ -221,12 +291,16 @@ export const updateBook = async (
 };
 
 export const deleteAuthor = async (
-	req: any,
+	req: Request,
 	res: Response,
 	next: NextFunction
 ) => {
+	const requestWithToken = req as RequestWithToken;
+	if (!requestWithToken.token) {
+		return res.sendStatus(403);
+	}
 	jwt.verify(
-		req.token,
+		requestWithToken.token as string,
 		process.env.JWT_SECRET_KEY as string,
 		async (err: any, data: any) => {
 			if (err) {
@@ -248,12 +322,16 @@ export const deleteAuthor = async (
 };
 
 export const deleteBook = async (
-	req: any,
+	req: Request,
 	res: Response,
 	next: NextFunction
 ) => {
+	const requestWithToken = req as RequestWithToken;
+	if (!requestWithToken.token) {
+		return res.sendStatus(403);
+	}
 	jwt.verify(
-		req.token,
+		requestWithToken.token as string,
 		process.env.JWT_SECRET_KEY as string,
 		async (err: any, data: any) => {
 			if (err) {
